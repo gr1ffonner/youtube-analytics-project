@@ -29,7 +29,7 @@ class Video:
         video_response = youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
                                                id=video_id
                                                ).execute()
-        return video_response.get('items', [])[0] if 'items' in video_response else {}
+        return video_response.get('items', [])[0] if video_response else {}
 
     def __str__(self):
         return self.title
@@ -113,15 +113,15 @@ class PlayList(Video):
 
         return "No videos found in the playlist."
 
-# vid_id = 'gaoc9MPZ4bw'
+vid_id = 'alsdkfji'
 # video2 = PLVideo('4fObz_qw9u4', 'PLv_zOGKKxVph_8g2Mqc3LMhj0M_BfasbC')
 # print(str(video2))
-# vid = Video(vid_id)
+vid = Video(vid_id)
 # vid.print_info()
-# # print(vid.title)
-# # print(vid.url)
-# # print(vid.like_count)
-# # print(vid.view_count)
+print(vid.title)
+print(vid.url)
+print(vid.like_count)
+print(vid.view_count)
 # # print(str(vid))
 # pl = PlayList('PLRDzFCPr95fK7tr47883DFUbm4GeOjjc0')
 # pl = PlayList('PLv_zOGKKxVpj-n2qLkEM2Hj96LO6uqgQw')
