@@ -5,30 +5,42 @@ from googleapiclient.discovery import build
 
 class Channel:
     """Класс для ютуб-канала"""
+    api_key = os.getenv("YOUTUBE_API_KEY")
 
-    def __init__(self, channel_id: str, api_key: str) -> None:
+    def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        self.channel_id = channel_id
-        self.__api_key = api_key
+        self._data = self.get_info(channel_id)
+        self._channel_id = channel_id
+        self.title = self._data.get('snippet', {}).get('title', '')
+        self.description = self._data.get('snippet', {}).get('description', '')
+        self.url = f"https://www.youtube.com/channel/{self._channel_id}"
+        self.subs = self._data.get('statistics', {}).get('subscriberCount', 0)
+        self.video_count = self._data.get('statistics', {}).get('videoCount', 0)
+        self.view_count = self._data.get('statistics', {}).get('viewCount', 0)
 
-    @staticmethod
-    def yt_connection(self):
-        youtube = build('youtube', 'v3', developerKey=self.__api_key)
+    @classmethod
+    def get_service(cls):
+        youtube = build('youtube', 'v3', developerKey=cls.api_key)
         return youtube
 
     @staticmethod
-    def get_info(self) -> dict:
-        youtube = self.yt_connection(self)
-        channel = youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        return channel
+    def get_info(channel_id: str) -> dict:
+        youtube = Channel.get_service()
+        channel = youtube.channels().list(id=channel_id, part='snippet,statistics').execute()
+        return channel.get('items', [])[0] if 'items' in channel else {}
 
     def print_info(self) -> None:
-        """Выводит в консоль информацию о канале."""
-        channel = self.get_info(self)
+        channel = self.get_info(channel_id)
         print(json.dumps(channel, indent=2, ensure_ascii=False))
 
+    def to_json(self, file_path: str) -> None:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(self._data, file, indent=2, ensure_ascii=False)
 
-api_key = os.getenv("YOUTUBE_API_KEY")
-channel_id = 'UCwHL6WHUarjGfUM_586me8w'
-ch = Channel(channel_id, api_key)
-ch.print_info()
+    @property
+    def channel_id(self):
+        return self._channel_id
+
+
+# channel_id = 'UC-OVMPlMA3-YCIeg4z5z23A'
+# moscowpython = Channel(channel_id)
