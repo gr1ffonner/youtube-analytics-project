@@ -14,7 +14,7 @@ class Channel:
         self.title = self._data.get('snippet', {}).get('title', '')
         self.description = self._data.get('snippet', {}).get('description', '')
         self.url = f"https://www.youtube.com/channel/{self._channel_id}"
-        self.subs = self._data.get('statistics', {}).get('subscriberCount', 0)
+        self.subs = int(self._data.get('statistics', {}).get('subscriberCount', 0))
         self.video_count = self._data.get('statistics', {}).get('videoCount', 0)
         self.view_count = self._data.get('statistics', {}).get('viewCount', 0)
 
@@ -30,17 +30,43 @@ class Channel:
         return channel.get('items', [])[0] if 'items' in channel else {}
 
     def print_info(self) -> None:
-        channel = self.get_info(channel_id)
+        channel = self.get_info(self.channel_id)
         print(json.dumps(channel, indent=2, ensure_ascii=False))
 
     def to_json(self, file_path: str) -> None:
         with open(file_path, 'w', encoding='utf-8') as file:
             json.dump(self._data, file, indent=2, ensure_ascii=False)
 
+    def __str__(self):
+        return f"{self.title} ({self.url})"
+
+    def __eq__(self, other):
+        return self.subs == other.subs
+
+    def __lt__(self, other):
+        return self.subs < other.subs
+
+    def __le__(self, other):
+        return self.subs <= other.subs
+
+    def __add__(self, other):
+        if isinstance(other, Channel):
+            return self.subs + other.subs
+        raise TypeError("Unsupported operand type for +: 'Channel' and {}".format(type(other)))
+
+    def __sub__(self, other):
+        if isinstance(other, Channel):
+            return self.subs - other.subs
+        raise TypeError("Unsupported operand type for -: 'Channel' and {}".format(type(other)))
+
     @property
     def channel_id(self):
         return self._channel_id
 
 
-# channel_id = 'UC-OVMPlMA3-YCIeg4z5z23A'
-# moscowpython = Channel(channel_id)
+# mosc_py_id = 'UC-OVMPlMA3-YCIeg4z5z23A'
+# django_shcool_id = "UC_hPYclmFCIENpMUHpPY8FQ"
+# moscowpython = Channel(mosc_py_id)
+# django_shcool = Channel(django_shcool_id)
+
+
