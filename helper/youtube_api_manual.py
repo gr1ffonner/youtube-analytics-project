@@ -29,7 +29,7 @@ docs: https://developers.google.com/youtube/v3/docs/channels/list
 # channel_id = 'UC-OVMPlMA3-YCIeg4z5z23A'  # MoscowPython
 channel_id = 'UCwHL6WHUarjGfUM_586me8w'  # HighLoad Channel
 channel = youtube.channels().list(id=channel_id, part='snippet,statistics').execute()
-printj(channel)
+# printj(channel)
 
 
 '''
@@ -91,8 +91,8 @@ video_id = 'gaoc9MPZ4bw'
 video_response = youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
                                        id=video_id
                                        ).execute()
-# printj(video_response)
-video_title: str = video_response['items'][0]['snippet']['title']
-view_count: int = video_response['items'][0]['statistics']['viewCount']
-like_count: int = video_response['items'][0]['statistics']['likeCount']
-comment_count: int = video_response['items'][0]['statistics']['commentCount']
+printj(video_response)
+# video_title: str = video_response['items'][0]['snippet']['title']
+# view_count: int = video_response['items'][0]['statistics']['viewCount']
+# like_count: int = video_response['items'][0]['statistics']['likeCount']
+# comment_count: int = video_response['items'][0]['statistics']['commentCount']
