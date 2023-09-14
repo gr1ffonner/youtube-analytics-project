@@ -12,11 +12,18 @@ class Video:
     def __init__(self, video_id: str) -> None:
         """Экземпляр инициализируется id видео. Дальше все данные будут подтягиваться по API."""
         self._data = self.get_info(video_id)
-        self._video_id = video_id
-        self.title = self._data.get('snippet', {}).get('title', '')
-        self.url = f"https://www.youtube.com/channel/{self._video_id}"
-        self.like_count = self._data.get('statistics', {}).get('likeCount', 0)
-        self.view_count = self._data.get('statistics', {}).get('viewCount', 0)
+        if self._data == None:
+            self._video_id = video_id
+            self.title = None
+            self.url = None
+            self.like_count = None
+            self.view_count = None
+        else:
+            self._video_id = video_id
+            self.title = self._data.get('snippet', {}).get('title', '')
+            self.url = f"https://www.youtube.com/channel/{self._video_id}"
+            self.like_count = self._data.get('statistics', {}).get('likeCount', 0)
+            self.view_count = self._data.get('statistics', {}).get('viewCount', 0)
 
     @classmethod
     def get_service(cls):
@@ -29,7 +36,11 @@ class Video:
         video_response = youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
                                                id=video_id
                                                ).execute()
-        return video_response.get('items', [])[0] if video_response else {}
+        try:
+            video_response = video_response.get('items', [])[0]
+            return video_response
+        except IndexError:
+            return None
 
     def __str__(self):
         return self.title
@@ -113,15 +124,16 @@ class PlayList(Video):
 
         return "No videos found in the playlist."
 
-vid_id = 'alsdkfji'
-# video2 = PLVideo('4fObz_qw9u4', 'PLv_zOGKKxVph_8g2Mqc3LMhj0M_BfasbC')
-# print(str(video2))
-vid = Video(vid_id)
+# vid_id = 'alsdkfji'
+# # video2 = PLVideo('4fObz_qw9u4', 'PLv_zOGKKxVph_8g2Mqc3LMhj0M_BfasbC')
+# # print(str(video2))
+# # vid = Video(vid_id)
+# # # print(vid._video_id)
 # vid.print_info()
-print(vid.title)
-print(vid.url)
-print(vid.like_count)
-print(vid.view_count)
+# print(vid.title)
+# print(vid.url)
+# print(vid.like_count)
+# print(vid.view_count)
 # # print(str(vid))
 # pl = PlayList('PLRDzFCPr95fK7tr47883DFUbm4GeOjjc0')
 # pl = PlayList('PLv_zOGKKxVpj-n2qLkEM2Hj96LO6uqgQw')
